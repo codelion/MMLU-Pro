@@ -2,9 +2,9 @@
 
 save_dir="eval_results/"
 global_record_file="eval_results/eval_record_collection.csv"
-model="meta-llama/Llama-2-7b-hf"
+model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 selected_subjects="all"
-gpu_util=0.8
+gpu_util=0.9
 
 cd ../../
 export CUDA_VISIBLE_DEVICES=0
