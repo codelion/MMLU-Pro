@@ -11,19 +11,19 @@ import time
 from datasets import load_dataset
 import argparse
 import requests
-from ai21 import AI21Client
-from ai21.models.chat import ChatMessage, ResponseFormat, DocumentSchema, FunctionToolDefinition
-from ai21.models.chat import ToolDefinition, ToolParameters
+# from ai21 import AI21Client
+# from ai21.models.chat import ChatMessage, ResponseFormat, DocumentSchema, FunctionToolDefinition
+# from ai21.models.chat import ToolDefinition, ToolParameters
 
-API_KEY = ""
-random.seed(12345)
+API_KEY = "no_key"
+
 
 def get_client():
     if args.model_name in ["gpt-4", "gpt-4o", "o1-preview"]:
         openai.api_key = API_KEY
         client = openai
-    elif args.model_name in ["deepseek-chat", "deepseek-coder"]:
-        client = OpenAI(api_key=API_KEY, base_url="https://api.deepseek.com/")
+    elif args.model_name in ["deepseek-chat", "deepseek-coder", "deepseek-r1" ]:
+        client = OpenAI(api_key=API_KEY, base_url="http://localhost:8000/v1")
     elif args.model_name in ["gemini-1.5-flash-latest", "gemini-1.5-pro-latest",
                              "gemini-1.5-flash-8b", "gemini-002-pro", "gemini-002-flash"]:
         genai.configure(api_key=API_KEY)
@@ -72,7 +72,7 @@ def get_client():
 
 def call_api(client, instruction, inputs):
     start = time.time()
-    if args.model_name in ["gpt-4", "gpt-4o", "deepseek-chat", "deepseek-coder"]:
+    if args.model_name in ["gpt-4", "gpt-4o", "deepseek-chat", "deepseek-coder", "deepseek-r1" ]:
         message_text = [{"role": "user", "content": instruction + inputs}]
         completion = client.chat.completions.create(
           model=args.model_name,
@@ -255,6 +255,7 @@ def update_result(output_res_path):
                         if category not in category_record:
                             category_record[category] = {"corr": 0.0, "wrong": 0.0}
                         if not each["pred"]:
+                            random.seed(12345)
                             x = random.randint(0, len(each["options"]) - 1)
                             if x == each["answer_index"]:
                                 category_record[category]["corr"] += 1
@@ -354,7 +355,7 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", "-o", type=str, default="eval_results/")
     parser.add_argument("--model_name", "-m", type=str, default="gpt-4",
                         choices=["gpt-4", "gpt-4o", "o1-preview",
-                                 "deepseek-chat", "deepseek-coder",
+                                 "deepseek-chat", "deepseek-coder", "deepseek-r1", 
                                  "gemini-1.5-flash-latest",
                                  "gemini-1.5-pro-latest",
                                  "claude-3-opus-20240229",
